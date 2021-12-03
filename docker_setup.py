@@ -85,8 +85,9 @@ def docker_setup() -> None:
 
 def color_copy_file(src: str, dest: str):
     try:
-        shutil.copyfile(src, dest)
         print(f"{COLORS['G']}[+] Copying {src} to {dest}{COLORS['RESET']}")
+        shutil.copyfile(src, dest)
+        print(f"{COLORS['G']}[+] Copy finished from {src} to {dest}{COLORS['RESET']}")
     except Exception:
         print(
             f"{COLORS['R']}[-] Unable to find file {src}\n"
