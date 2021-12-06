@@ -1,15 +1,17 @@
-FROM python:3.9
+FROM python:3.8 as builder
 
 WORKDIR ./
 
-COPY requirements.txt ./
+RUN apt-get update
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY telegrambot/requirements.txt ./requirements.txt
 
-COPY binance-trade-bot/requirements.txt ./
+RUN pip install -r ./requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
+#COPY requirements.txt ./trader-requirements.txt
+#
+#RUN pip install --no-cache-dir -r trader-requirements.txt
+#RUN mkdir /btb_manager_telegram
+#COPY telegrambot/btb_manager_telegram/ /btb_manager_telegram
 
 CMD [ "python", "-m", "btb_manager_telegram", "-p", "./binance-trade-bot/"]
