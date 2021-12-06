@@ -33,14 +33,14 @@ value:
   last_update: "Última actualización: `%{update}`"
   current_coin: "*Moneda actual %{coin}:*"
   balance: "- Balance: `%{balance}` *%{coin}*"
-  exchange_rate_purchased: "- Tipo de cambio en la compra: `%{rate}` *%{bridge}*/*%{coin}*"
-  exchange_rate_now: "- Tipo de cambio actual:           `%{rate}` *USD*/*%{coin}*"
+  exchange_rate_purchased: "- Tipo de cambio en la compra: `%{rate}` *%{coin}*/*%{bridge}*"
+  exchange_rate_now: "- Tipo de cambio actual: `%{rate}` *%{coin}*/*USD*"
   value_change: "- *Cambio en valor*: `%{change}` *%*"
   value_usd: "- Valor en *USD*: `%{value}` *USD*"
   value_btc: "- Valor en *BTC*: `%{value}` *BTC*"
   bought_for: "_Comprado por_ `%{value}` *%{coin}*"
-  one_day_change_btc: "Cambio de un dia (BTC): `%{value}` %"
-  seven_day_change_btc: "Cambio de los 7 días (BTC): `%{value}` %"
+  one_day_change_btc: "Cambio de un dia \\(BTC\\): `%{value}` %"
+  seven_day_change_btc: "Cambio de los 7 días \\(BTC\\): `%{value}` %"
 
 
 progress:
@@ -180,7 +180,7 @@ script:
   no_script: "No se encontró ningún script personalizado en el archivo `/config/custom_scripts.json` de *BTB-manager-telegram*"
   no_config: "No fue posible encontrar `custom_scripts.json` dentro del directorio `config/` de *BTB-manager-telegram* '"
   select: "Elige uno de los scripts personalizados para ejecutarlo."
-  
+
 graph:
   msg_existing_graphs: "Elige una grafica o crea una nueva. Consejo: La sintaxis es 'MONEDA1,MONEDA2,MONEDA3 NumeroDias'"
   msg_no_graphs: "Usa el boton 'Nueva grafica' para crear una grafica."
@@ -202,7 +202,7 @@ graph:
     g: "`USD,BTC 0` mostrara el valor de tus criptomonedas holdeadas en dolares y BTC desde que se tienen datos"
     h: "`* 14` mostrara el valor en todas las monedas registradas en los ultimos 14 dias"
     i: "Escribe `/stop` para salir"
-    
+
 keyboard:
   current_value: "💵 Valor actual"
   progress: "📈 Progreso"
