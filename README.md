@@ -197,7 +197,7 @@ This project follows the [all-contributors] specification.
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-[binance trade bot]: https://github.com/edeng23/binance-trade-bot
+[binance trade bot]: https://github.com/shroukkhan/binance-trade-bot
 [wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 [troubleshooting]: ./docs/troubleshooting.md
 [docker setup]: ./docs/docker-setup.md
