@@ -50,7 +50,7 @@ However, you can run the bot with options :
 # (Otherwise you will have to manually start the Binance Trade Bot from telegram)
 python3 -m btb_manager_telegram -s
 
-# Use the french translation. Available translation : en, ru, fr, de, nl, es
+# Use the french translation. Available translation : en, ru, fr, de, nl, es, id
 python3 -m btb_manager_telegram -l fr
 
 # Make possible to plot the bot's performance in EUR instead of USD
@@ -90,7 +90,7 @@ Check the translation is complete :
 ```bash
 cd i18n
 pip3 install click
-python3 check_translation_file it.yml
+python3 check_translation_file.py it.yml
 ```
 Please submit your translation in a PR for it to profit everybody!
 
@@ -189,6 +189,10 @@ This project follows the [all-contributors] specification.
     <td align="center"><a href="https://github.com/santiagocarod"><img src="https://avatars.githubusercontent.com/u/23182382?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Santiago Caro Duque</b></sub></a><br /><a href="https://github.com/shroukkhan/BTB-manager-telegram/issues?q=author%3Asantiagocarod" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/shhhmel"><img src="https://avatars.githubusercontent.com/u/17930913?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ivan Myronov</b></sub></a><br /><a href="#translation-shhhmel" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/hieu0nguyen"><img src="https://avatars.githubusercontent.com/u/4257715?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hieu Nguyen</b></sub></a><br /><a href="https://github.com/shroukkhan/BTB-manager-telegram/issues?q=author%3Ahieu0nguyen" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/SunBooster"><img src="https://avatars.githubusercontent.com/u/79193009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Riza Abdul Aziz</b></sub></a><br /><a href="#translation-SunBooster" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://webdriver.agency/"><img src="https://avatars.githubusercontent.com/u/33579804?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kelecheck</b></sub></a><br /><a href="#translation-kelecheck" title="Translation">🌍</a></td>
   </tr>
 </table>
 

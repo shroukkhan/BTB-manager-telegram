@@ -206,6 +206,24 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "SunBooster",
+      "name": "Riza Abdul Aziz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79193009?v=4",
+      "profile": "https://github.com/SunBooster",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "kelecheck",
+      "name": "Kelecheck",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33579804?v=4",
+      "profile": "https://webdriver.agency/",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
