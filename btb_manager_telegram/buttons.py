@@ -5,7 +5,6 @@ import time
 from configparser import ConfigParser
 from datetime import datetime
 
-import i18n
 from btb_manager_telegram import BOUGHT, BUYING, SELLING, SOLD, logger, settings
 from btb_manager_telegram.binance_api_utils import get_current_price
 from btb_manager_telegram.table import tabularize
@@ -34,15 +33,17 @@ def current_value():
             # Get current coin symbol, bridge symbol, order state, order size, initial buying price
             try:
                 cur.execute(
-                    """SELECT alt_coin_id, crypto_coin_id, state, alt_trade_amount, crypto_starting_balance, crypto_trade_amount FROM trade_history ORDER BY datetime DESC LIMIT 1;"""
+                    "SELECT alt_coin_id, crypto_coin_id, state, alt_trade_amount, "
+                    "crypto_starting_balance, crypto_trade_amount "
+                    "FROM trade_history ORDER BY datetime DESC LIMIT 1;"
                 )
                 (
-                    current_coin,
-                    bridge,
-                    state,
-                    alt_amount,
-                    order_size,
-                    buy_price,
+                    current_coin,  # alt_coin_id
+                    bridge,  # crypto_coin_id
+                    state,  # state
+                    alt_amount,  # alt_trade_amount
+                    order_size,  # crypto_starting_balance
+                    buy_price,  # crypto_trade_amount
                 ) = cur.fetchone()
                 if current_coin is None:
                     raise Exception()
@@ -110,9 +111,9 @@ def current_value():
                 )
 
                 if (
-                    query_1_day is not None
-                    and all(elem is not None for elem in query_1_day)
-                    and usd_price != 0
+                        query_1_day is not None
+                        and all(elem is not None for elem in query_1_day)
+                        and usd_price != 0
                 ):
                     balance_1_day, usd_price_1_day = query_1_day
                     return_rate_1_day = round(
@@ -123,9 +124,9 @@ def current_value():
                     )
 
                 if (
-                    query_7_day is not None
-                    and all(elem is not None for elem in query_7_day)
-                    and usd_price != 0
+                        query_7_day is not None
+                        and all(elem is not None for elem in query_7_day)
+                        and usd_price != 0
                 ):
                     balance_7_day, usd_price_7_day = query_7_day
                     return_rate_7_day = round(
@@ -262,7 +263,7 @@ def current_ratios():
                 scout_multiplier = config.get("binance_user_config", "scout_multiplier")
                 try:  # scout_margin Edgen
                     scout_margin = (
-                        float(config.get("binance_user_config", "scout_margin")) / 100.0
+                            float(config.get("binance_user_config", "scout_margin")) / 100.0
                     )
                     use_margin = config.get("binance_user_config", "use_margin")
                 except Exception as e:
@@ -375,7 +376,7 @@ def next_coin():
                 scout_multiplier = config.get("binance_user_config", "scout_multiplier")
                 try:  # scout_margin Edgen
                     scout_margin = (
-                        float(config.get("binance_user_config", "scout_margin")) / 100.0
+                            float(config.get("binance_user_config", "scout_margin")) / 100.0
                     )
                     use_margin = config.get("binance_user_config", "use_margin")
                 except Exception as e:
