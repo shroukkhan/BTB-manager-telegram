@@ -11,9 +11,8 @@ select_option: "Пожалуйста, выберите один из вариа�
 welcome:
   hello: "Привет, *%{name}*!"
   welcome: "Добро пожаловать в _Binance Trade Bot Manager Telegram_."
-  developed_by: "Этот бот Telegram был разработан @lorcalhost."
+  developed_by: "Этот бот Telegram был разработан %{contributors}."
   project_link: "Узнать больше о проекте [здесь](https://github.com/lorcalhost/BTB-manager-telegram)."
-  donation: "*Если Вам нравятся мои работы, пожалуйста, рассмотрите возможность поддержки проекта небольшим [пожертвованием](https://github.com/sponsors/lorcalhost). ❤*"
   how_to_start: "*Чтобы начать общение, нажмите на кнопку `/start`*"
   bot_started: "Я уже запустил для вас торгового бота, не нужно запускать его заново!"
   bot_not_started:
@@ -32,15 +31,13 @@ value:
   error: "❌ Что-то пошло не так, не могу сгенерировать стоимость сейчас."
   last_update: "Обновлено: `%{update}`"
   current_coin: "*Текущая монета %{coin}:*"
-  balance: "- Баланс: `%{balance}` *%{coin}*"
-  exchange_rate_purchased: "- Курс покупки: `%{rate}` *%{coin}*/*%{bridge}*"
-  exchange_rate_now: "- Курс сейчас: `%{rate}` *%{coin}*/*USD*"
-  value_change: "- *Изменение стоимости*: `%{change}` *%*"
-  value_usd: "- Стоимость в *USDT*: `%{value}`"
-  value_btc: "- Стоимость в *BTC*: `%{value}`"
-  bought_for: "_Куплен за_ `%{value}` *%{coin}*"
-  one_day_change_btc: "Изменение за 1 день: `%{value}` % BTC"
-  seven_day_change_btc: "Изменение за 7 дней: `%{value}` % BTC"
+  balance:                 "Баланс              : %{balance} %{coin}"
+  exchange_rate_purchased: "Курс покупки        : %{rate} %{coin}/%{bridge}"
+  exchange_rate_now:       "Курс сейчас         : %{rate} %{coin}/USD"
+  value_change:            "Изменение стоимости : %{change} %"
+  value_usd:               "Стоимость в USDT    : %{value}"
+  value_btc:               "Стоимость в BTC     : %{value}"
+  bought_for:              "Куплен за           : %{value} %{coin}"
 
 
 progress:

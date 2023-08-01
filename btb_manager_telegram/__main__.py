@@ -1,11 +1,16 @@
 import argparse
+import datetime as dt
+import json
+import os
+import subprocess
 import sys
 import time
-from subprocess import PIPE, run
 
 import colorama
-from telegram import Bot, ReplyKeyboardMarkup
-from telegram.ext import ConversationHandler, Updater
+import i18n
+import psutil
+import telegram
+import telegram.ext
 
 from btb_manager_telegram import (
     CREATE_GRAPH,
@@ -18,20 +23,18 @@ from btb_manager_telegram import (
     PANIC_BUTTON,
     UPDATE_BTB,
     UPDATE_TG,
-    logger,
-    scheduler,
-    scheduler_thread,
     settings,
 )
 from btb_manager_telegram.buttons import start_bot
-from btb_manager_telegram.report import make_snapshot
+from btb_manager_telegram.formating import escape_tg
+from btb_manager_telegram.logging import logger, tg_error_handler
+from btb_manager_telegram.report import make_snapshot, migrate_reports
+from btb_manager_telegram.schedule import scheduler
 from btb_manager_telegram.utils import (
-    escape_tg,
-    i18n_format,
+    get_restart_file_name,
     retreive_btb_constants,
     setup_coin_list,
     setup_i18n,
-    setup_root_path_constant,
     setup_telegram_constants,
     update_checker,
 )
@@ -39,7 +42,7 @@ from btb_manager_telegram.utils import (
 
 def pre_run_main() -> None:
     parser = argparse.ArgumentParser(
-        description="Thanks for using Binance Trade Bot Manager Telegram. "
+        description="Thanks for using Binance Trade telegram.Bot Manager Telegram. "
         'By default the program will use "../binance-trade-bot/" as binance-trade-bot installation path.'
     )
     parser.add_argument(
@@ -63,7 +66,7 @@ def pre_run_main() -> None:
         "-l",
         "--language",
         type=str,
-        help="(optional) Select a language. Available: en, ru, fr, de, nl, es",
+        help="(optional) Select a language. Available: en, ru, fr, de, nl, es, id",
         default="en",
     )
     parser.add_argument(
@@ -96,14 +99,31 @@ def pre_run_main() -> None:
         help="(optional) Run the script in a docker container."
         "NOTE: Run the 'docker_setup.py' file before passing this flag.",
     )
+    parser.add_argument(
+        "--_remove_this_arg_auto_restart_old_pid", type=str, default=None
+    )
 
     args = parser.parse_args()
+
+    if args._remove_this_arg_auto_restart_old_pid is not None:
+        old_pid = int(
+            args._remove_this_arg_auto_restart_old_pid.lstrip("_remove_this_arg_")
+        )
+        logger.info(
+            f"The new process says : Restart initied. Waiting for the old process with pid {old_pid} to terminate."
+        )
+        restart_filename = get_restart_file_name(old_pid)
+        open(restart_filename, "w").close()
+        while psutil.pid_exists(old_pid):
+            time.sleep(0.1)
+        os.remove(restart_filename)
+        logger.info(f"The new process says : The old process has terminated. Starting.")
 
     if args.docker:
         run_on_docker()
         exit(1)
 
-    settings.ROOT_PATH = args.path
+    settings.ROOT_PATH = os.path.join(args.path, "")
     settings.PYTHON_PATH = args.python_path
     settings.TOKEN = args.token
     settings.CHAT_ID = args.chat_id
@@ -111,7 +131,7 @@ def pre_run_main() -> None:
     settings.START_TRADE_BOT = args.start_trade_bot
     settings.CURRENCY = args.currency
     settings.OER_KEY = args.oer_key
-    settings.RAW_ARGS = " ".join(sys.argv[1:])
+    settings.RAW_ARGS = [i for i in sys.argv[1:] if "_remove_this_arg_" not in i]
 
     if settings.CURRENCY not in ("USD", "EUR") and (
         settings.OER_KEY is None or settings.OER_KEY == ""
@@ -120,20 +140,22 @@ def pre_run_main() -> None:
             "If using another currency than USD or EUR, and openexchangerates API key is needed"
         )
 
+    with open("btbmt.pid", "w") as f:
+        f.write(str(os.getpid()))
+
     setup_i18n(settings.LANG)
-    setup_root_path_constant()
     retreive_btb_constants()
     setup_coin_list()
-
     if settings.TOKEN is None or settings.CHAT_ID is None:
         setup_telegram_constants()
-
-    settings.BOT = Bot(settings.TOKEN)
+    settings.BOT = telegram.Bot(settings.TOKEN)
     settings.CHAT = settings.BOT.getChat(settings.CHAT_ID)
 
-    scheduler.enter(1, 1, update_checker)
-    scheduler.enter(1, 1, make_snapshot)
-    scheduler_thread.start()
+    migrate_reports()
+
+    scheduler.exec_periodically(update_checker, dt.timedelta(days=7).total_seconds())
+    scheduler.exec_periodically(make_snapshot, dt.timedelta(hours=1).total_seconds())
+    scheduler.start()
 
     return False
 
@@ -150,24 +172,26 @@ def main() -> None:
         trade_bot_status = start_bot()
 
         if trade_bot_status in (0, 1):
-            message_trade_bot += i18n_format("welcome.bot_started")
+            message_trade_bot += i18n.t("welcome.bot_started")
         else:
-            message_trade_bot += i18n_format("welcome.bot_not_started.base") + " "
+            message_trade_bot += i18n.t("welcome.bot_not_started.base") + " "
             if trade_bot_status == 2:
-                message_trade_bot += i18n_format("welcome.bot_not_started.bot_error")
+                message_trade_bot += i18n.t("welcome.bot_not_started.bot_error")
             if trade_bot_status == 3:
-                message_trade_bot += i18n_format("welcome.bot_not_started.bad_path")
+                message_trade_bot += i18n.t("welcome.bot_not_started.bad_path")
             if trade_bot_status == 4:
-                message_trade_bot += i18n_format("welcome.bot_not_started.no_python")
+                message_trade_bot += i18n.t("welcome.bot_not_started.no_python")
         message_trade_bot += "\n\n"
 
-    # Create the Updater and pass it your token
-    updater = Updater(settings.TOKEN)
+    # Create the telegram.ext.Updater and pass it your token
+    updater = telegram.ext.Updater(settings.TOKEN)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
 
-    conv_handler = ConversationHandler(
+    dispatcher.add_error_handler(tg_error_handler)
+
+    conv_handler = telegram.ext.ConversationHandler(
         entry_points=[
             handlers.ENTRY_POINT_HANDLER,
         ],
@@ -189,21 +213,28 @@ def main() -> None:
     )
     dispatcher.add_handler(conv_handler)
 
-    # Start the Bot
+    # Start the telegram.Bot
     updater.start_polling()
 
     # Welcome mat
-    message = (
-        f"{i18n_format('welcome.hello', name=settings.CHAT.first_name)}\n"
-        f"{i18n_format('welcome.welcome')}\n\n"
-        f"{i18n_format('welcome.developed_by')}\n"
-        f"{i18n_format('welcome.project_link')}\n\n"
-        f"{i18n_format('welcome.donation')}\n\n"
-        f"{message_trade_bot}"
-        f"{i18n_format('welcome.how_to_start')}"
+
+    with open(".all-contributorsrc", "r") as f:
+        contributors_data = json.load(f)
+    contributors = ", ".join(
+        [f"[{i['login']}]({i['profile']})" for i in contributors_data["contributors"]]
     )
+
+    message = (
+        f"{i18n.t('welcome.hello', name=settings.CHAT.first_name)}\n"
+        f"{i18n.t('welcome.welcome')}\n\n"
+        f"{i18n.t('welcome.developed_by', contributors=contributors)}\n"
+        f"{i18n.t('welcome.project_link')}\n\n"
+        f"{message_trade_bot}"
+        f"{i18n.t('welcome.how_to_start')}"
+    )
+
     keyboard = [["/start"]]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    reply_markup = telegram.ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     settings.CHAT.send_message(
         escape_tg(message),
         reply_markup=reply_markup,
@@ -216,16 +247,23 @@ def main() -> None:
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
 
-    scheduler_thread.stop()
-    scheduler_thread.join()
+    scheduler.stop()
+    scheduler.join()
+
+    try:
+        os.remove("btbmt.pid")
+    except FileNotFoundError:
+        pass
 
     logger.info("The telegram bot has stopped")
 
 
 def run_on_docker() -> None:
     try:
-        run("docker image inspect btbmt", shell=True, check=True, stdout=PIPE)
-        run("docker run --rm -it btbmt", shell=True)
+        subprocess.run(
+            "docker image inspect btbmt", shell=True, check=True, stdout=subprocess.PIPE
+        )
+        subprocess.run("docker run --rm -it btbmt", shell=True)
 
     except Exception as e:
         print(

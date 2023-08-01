@@ -11,9 +11,8 @@ select_option: "Please select one of the options."
 welcome:
   hello: "Hi *%{name}*!"
   welcome: "Welcome to _Binance Trade Bot Manager Telegram_."
-  developed_by: "This Telegram bot was developed by @lorcalhost."
+  developed_by: "This Telegram bot was developed by %{contributors}."
   project_link: "Find out more about the project [here](https://github.com/lorcalhost/BTB-manager-telegram)."
-  donation: "*If you like my work please [consider supporting the project through a small donation](https://github.com/sponsors/lorcalhost). ❤*"
   how_to_start: "*To start the conversation, click on the button `/start`*"
   bot_started: "I already started the trade bot for you, no need to start it again!"
   bot_not_started:
@@ -32,15 +31,14 @@ value:
   error: "❌ Something went wrong, unable to generate value at this time."
   last_update: "Last update: `%{update}`"
   current_coin: "*Current coin %{coin}:*"
-  balance: "- Balance: `%{balance}` *%{coin}*"
-  exchange_rate_purchased: "- Exchange rate purchased: `%{rate}` *%{coin}*/*%{bridge}*"
-  exchange_rate_now: "- Exchange rate now:           `%{rate}` *%{coin}*/*USD*"
-  value_change: "- *Change in value*: `%{change}` *%*"
-  value_usd: "- Value in *USD*: `%{value}` *USD*"
-  value_btc: "- Value in *BTC*: `%{value}` *BTC*"
-  bought_for: "_Bought for_ `%{value}` *%{coin}*"
-  one_day_change_btc: "1 day change BTC: `%{value}` %"
-  seven_day_change_btc: "7 day change BTC: `%{value}` %"
+  balance:                 "Balance               : %{balance} %{coin}"
+  exchange_rate_purchased: "Exchg. rate purchased : %{rate} %{coin}/%{bridge}"
+  exchange_rate_now:       "Exchange rate now     : %{rate} %{coin}/USD"
+  value_change:            "Change in value       : %{change} %"
+  value_usd:               "Value in USD          : %{value} USD"
+  value_btc:               "Value in BTC          : %{value} BTC"
+  bought_for:              "Bought for            : %{value} %{coin}"
+  change_btc:              "%{days} day change BTC %{spaces}    : %{value}"
 
 
 progress:
@@ -80,6 +78,29 @@ history:
   error: "❌ Something went wrong, unable to generate trade history at this time."
   db_error: "❌ Unable to fetch trade history from database."
 
+
+bot_stats:
+  bot_started:  "Bot started  : %{date} (%{no_days} days ago)"
+  nb_jumps:     "No of Jumps  :"
+  start_coin:   "Start Coin   :"
+  current_coin: "Current Coin :"
+  hodl:         "Buy & Hold   :"
+  profit:       "Bot Profit   :"
+  min_max_usd:  "Min/Max USD  :"
+  min_max_btc:  "Min/Max BTC  :"
+  coin_progress: "Coin progress:"
+  table:
+    coin: "Coin"
+    from: "From"
+    to: "To"
+  error:
+    db_error: "❌ Unable to fetch statistics from database."
+    date_error: "❌ Unable to fetch date information."
+    empty_trade_history: "❌ Trade History is empty, wait for trades to get statistics."
+    first_coin_error: "❌ Failed to retrieve bot's start coin info from database."
+    current_coin_error: "❌ Failed to retrieve bot's current coin info from database."
+    value_error: "❌ Error retieving info from db. Error Code = `%{error_code}`."
+    start_coin_not_found: "❌ Bot start coin not found in supported list."
 
 btb:
   not_running: "⚠ Binance Trade Bot is not running."
@@ -156,14 +177,13 @@ db:
 
 update:
   now: "Would you like to update now?"
-
   tgb:
     updating: "The bot is updating. Please wait for it to restart."
     version_error: "Error while trying to fetch BTB Manager Telegram version information."
     error: "Unable to update BTB Manager Telegram"
     not_updated: "BTB Manager Telegram was *not* updated."
     up_to_date: "Your BTB Manager Telegram installation is already up to date."
-    available: "An update for BTB Manager Telegram is available."
+    available: "Your telegram manager is currently on version %{current_version}, and version %{remote_version} is available."
     instruction: "Please update by going to *🛠 Maintenance* and pressing the *⬆ Update Telegram Bot* button."
 
   btb:
@@ -183,6 +203,11 @@ script:
   no_script: "No custom script was found inside *BTB-manager-telegram* 's `/config/custom_scripts.json` file."
   no_config: "Unable to find `custom_scripts.json` file inside *BTB-manager-telegram* 's `config/` directory."
   select: "Select one of your custom scripts to execute it."
+
+
+snapshot:
+  error: "❌ Unable to take a snapshot of the binance account for the moment. Error message:"
+
 
 graph:
   msg_existing_graphs: "Choose a graph or create a new one. Hint : the syntax is 'COIN1,COIN2,COIN3 NumberOfDays'"
@@ -206,6 +231,7 @@ graph:
     h: "`* 14` will plot your holdings in all recorded coins over the last 14 days"
     i: "Write `/stop` to exit"
 
+
 keyboard:
   current_value: "💵 Current value"
   progress: "📈 Progress"
@@ -213,6 +239,7 @@ keyboard:
   trade_history: "⌛ Trade History"
   panic: "🚨 Panic button"
   check_status: "🔍 Check bot status"
+  bot_stats: "🚀 Bot stats"
   maintenance: "🛠 Maintenance"
   configurations: "⚙️ Configurations"
   start: "▶ Start trade bot"
