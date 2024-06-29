@@ -29,7 +29,7 @@ def get_db_cursor(fun):
         if os.path.isfile(db_file_path):
             try:
                con = sqlite3.connect(db_file_path, timeout=15)
-                cur = con.cursor()
+               cur = con.cursor()
             except Exception as e:
                 logger.error(
                     f"Cannot connect to database, even if the file has been found."
