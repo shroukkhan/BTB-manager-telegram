@@ -28,7 +28,7 @@ def get_db_cursor(fun):
         db_file_path = os.path.join(settings.ROOT_PATH, "data/crypto_trading.db")
         if os.path.isfile(db_file_path):
             try:
-                con = sqlite3.connect(db_file_path)
+               con = sqlite3.connect(db_file_path, timeout=15)
                 cur = con.cursor()
             except Exception as e:
                 logger.error(
