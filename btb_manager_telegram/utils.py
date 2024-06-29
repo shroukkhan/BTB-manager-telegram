@@ -207,6 +207,7 @@ def is_tg_bot_update_available():
 
 
 def update_checker():
+    return
     logger.info("Checking for updates.")
 
     if settings.TG_UPDATE_BROADCASTED_BEFORE is False:
