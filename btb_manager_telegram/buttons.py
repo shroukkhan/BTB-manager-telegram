@@ -61,7 +61,7 @@ def current_value(cur):
             f"""SELECT balance, usd_price, btc_price, datetime
                 FROM 'coin_value'
                 WHERE coin_id = '{current_coin}'
-                ORDER BY datetime DESC LIMIT 1;"""
+                ORDER BY id DESC LIMIT 1;"""
         )
         query = cur.fetchone()
         if query is None:
